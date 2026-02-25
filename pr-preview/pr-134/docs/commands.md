@@ -24,6 +24,7 @@ agent-device app-switcher
 - `open <url>` deep links are supported on Android and iOS.
 - `open <app> <url>` opens a deep link on iOS.
 - On iOS devices, `http(s)://` URLs open in Safari when no app is active. Custom scheme URLs require an active app in the session.
+- Tenant-scoped daemon runs can pass `--tenant`, `--session-isolation tenant`, `--run-id`, and `--lease-id` to enforce lease admission.
 
 ```bash
 agent-device open "https://example.com" --platform ios           # open link in web browser
@@ -190,6 +191,12 @@ agent-device settings faceid match
 agent-device settings faceid nonmatch
 agent-device settings faceid enroll
 agent-device settings faceid unenroll
+agent-device settings touchid match
+agent-device settings touchid nonmatch
+agent-device settings touchid enroll
+agent-device settings touchid unenroll
+agent-device settings fingerprint match
+agent-device settings fingerprint nonmatch
 agent-device settings permission grant camera
 agent-device settings permission deny microphone
 agent-device settings permission grant photos limited
@@ -198,13 +205,15 @@ agent-device settings permission reset notifications
 
 - iOS `settings` support is simulator-only.
 - `settings appearance` maps to iOS simulator appearance and Android night mode.
-- Face ID controls are iOS simulator-only.
+- Face ID and Touch ID controls are iOS simulator-only.
+- Fingerprint simulation is supported on Android targets where `cmd fingerprint` or `adb emu finger` is available.
+  On physical Android devices, only `cmd fingerprint` is attempted.
 - Permission actions are scoped to the active session app.
 - iOS permission targets: `camera`, `microphone`, `photos` (`full` or `limited`), `contacts`, `notifications`.
 - Android permission targets: `camera`, `microphone`, `photos`, `contacts`, `notifications`.
 - Android uses `pm grant|revoke` for runtime permissions (`reset` maps to revoke) and `appops` for notifications.
 - `full|limited` mode is supported only for iOS `photos`; other targets reject mode.
-- Use `match`/`nonmatch` to simulate valid/invalid Face ID outcomes.
+- Use `match`/`nonmatch` to simulate valid/invalid Face ID, Touch ID, and Android fingerprint outcomes.
 
 ## App state and app lists
 
@@ -328,4 +337,4 @@ tail -50 ~/.agent-device/sessions/default/app.log
 - If first-run XCTest setup/build is slow, increase daemon request timeout:
   - `AGENT_DEVICE_DAEMON_TIMEOUT_MS=120000` (default is `90000`)
 - For daemon startup troubleshooting:
-  - follow stale metadata hints for `~/.agent-device/daemon.json` and `~/.agent-device/daemon.lock`
+  - follow stale metadata hints for `<state-dir>/daemon.json` and `<state-dir>/daemon.lock` (`state-dir` defaults to `~/.agent-device`)
