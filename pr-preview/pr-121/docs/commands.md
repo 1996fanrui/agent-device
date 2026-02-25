@@ -177,6 +177,20 @@ agent-device apps --platform android --all
 - iOS `appstate` is session-scoped and reports the app tracked by the active session on the target device.
 - `apps` includes default/system apps by default (use `--user-installed` to filter).
 
+## Clipboard
+
+```bash
+agent-device clipboard read
+agent-device clipboard write "https://example.com"
+agent-device clipboard write ""   # clear clipboard
+```
+
+- `clipboard read` returns clipboard text for the selected target.
+- `clipboard write <text>` updates clipboard text on the selected target.
+- Works with an active session device or explicit selectors (`--platform`, `--device`, `--udid`, `--serial`).
+- Supported on Android emulator/device and iOS simulator.
+- iOS physical devices currently return `UNSUPPORTED_OPERATION` for clipboard commands.
+
 ## Performance metrics
 
 ```bash
@@ -190,6 +204,8 @@ agent-device metrics --json
 - Unit: milliseconds (`ms`).
 - Platform support for current startup sampling: iOS simulator, iOS physical device, Android emulator/device.
 - `fps`, `memory`, and `cpu` are surfaced as unavailable placeholders in this release.
+- If no startup sample exists yet for the session, run `open <app|url>` first and retry `perf`.
+- Interpretation note: this startup metric is command round-trip timing and does not represent true first frame / first interactive app instrumentation.
 
 ## Media and logs
 
