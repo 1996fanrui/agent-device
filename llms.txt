@@ -5,6 +5,7 @@
 ## Docs
 
 - [Introduction](/agent-device/docs/introduction.md): agent-device is a CLI for automating iOS simulators + physical devices and Android emulators + devices from agents. It provides: Accessibility snapshots for UI understandingDeterministic interactions (tap, type, scroll)Session-aware workflows and replay If you know agent-browser, this is the mobile-native counterpart for iOS/Android UI automation.
+For exploratory QA and bug-hunting workflows, see skills/dogfood/SKILL.md in this repository.
 
 ## Others
 
