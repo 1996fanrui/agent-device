@@ -21,7 +21,7 @@ For exploratory QA and bug-hunting workflows, see `skills/dogfood/SKILL.md` in t
 
 ## Platform support highlights
 
-- iOS core runner commands: `snapshot`, `diff snapshot`, `wait`, `click`, `fill`, `get`, `is`, `find`, `press`, `long-press`, `focus`, `type`, `scroll`, `scrollintoview`, `back`, `home`, `app-switcher`, `open` (app), `close`, `screenshot`, `apps`, `appstate`, `reinstall`.
+- iOS core runner commands: `snapshot`, `diff snapshot`, `wait`, `click`, `fill`, `get`, `is`, `find`, `press`, `long-press`, `focus`, `type`, `scroll`, `scrollintoview`, `back`, `home`, `app-switcher`, `open` (app), `close`, `screenshot`, `apps`, `appstate`, `reinstall`, `trigger-app-event`.
 - iOS `appstate` is session-scoped on the selected target device.
 - iOS simulator-only: `alert`, `pinch`, `settings`, `push`, `clipboard`.
 - Session performance metrics: `perf`/`metrics` is available on iOS and Android and currently reports startup timing sampled from `open` command round-trip duration.
@@ -31,6 +31,7 @@ For exploratory QA and bug-hunting workflows, see `skills/dogfood/SKILL.md` in t
   - Physical-device recording requires an active app session context (`open <app>` first).
   - Physical-device recording defaults to uncapped (max available) FPS and supports `--fps` caps.
 - Android supports the same core interaction set, plus `push` notification simulation and `clipboard read/write` via adb shell commands.
+- App-event triggers are available on iOS and Android through app-defined deep-link hooks (`trigger-app-event`), using active session context or explicit device selectors.
 
 ## Architecture (high level)
 
@@ -364,6 +365,24 @@ agent-device push com.example.app '{"action":"com.example.app.PUSH","extras":{"t
   `{"action":"<intent-action>","receiver":"<optional component>","extras":{"key":"value","flag":true,"count":3}}`.
 - Android extras support `string`, `boolean`, and `number` values.
 - `push` works with the active session device, or with explicit selectors (`--platform`, `--device`, `--udid`, `--serial`).
+
+## App event triggers (app hook)
+
+```bash
+agent-device trigger-app-event screenshot_taken '{"source":"qa"}'
+```
+
+- `trigger-app-event <event> [payloadJson]` dispatches app-defined events via deep link.
+- `trigger-app-event` requires either an active session or explicit device selectors (`--platform`, `--device`, `--udid`, `--serial`).
+- On iOS physical devices, custom-scheme deep links require active app context (open app first in the session).
+- Configure one of:
+  - `AGENT_DEVICE_APP_EVENT_URL_TEMPLATE`
+  - `AGENT_DEVICE_IOS_APP_EVENT_URL_TEMPLATE`
+  - `AGENT_DEVICE_ANDROID_APP_EVENT_URL_TEMPLATE`
+- Template placeholders: `{event}`, `{payload}`, `{platform}`.
+- Example template: `myapp://agent-device/event?name={event}&payload={payload}`.
+- `payloadJson` must be a JSON object.
+- This is app-hook-based simulation and does not inject OS-global notifications.
 
 ## Settings helpers
 
