@@ -255,20 +255,4 @@ extension RunnerTests {
     center.press(forDuration: 0.05, thenDragTo: endPoint)
   }
 
-  func aggregatedLabel(for element: XCUIElement, depth: Int = 0) -> String? {
-    if depth > 2 { return nil }
-    let text = element.label.trimmingCharacters(in: .whitespacesAndNewlines)
-    if !text.isEmpty { return text }
-    if let value = element.value {
-      let valueText = String(describing: value).trimmingCharacters(in: .whitespacesAndNewlines)
-      if !valueText.isEmpty { return valueText }
-    }
-    let children = element.children(matching: .any).allElementsBoundByIndex
-    for child in children {
-      if let childLabel = aggregatedLabel(for: child, depth: depth + 1) {
-        return childLabel
-      }
-    }
-    return nil
-  }
 }

@@ -95,6 +95,7 @@ extension RunnerTests {
       )
     }
   }
+
   // MARK: - Response Encoding
 
   private func jsonResponse(status: Int, response: Response) -> Data {
