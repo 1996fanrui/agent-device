@@ -47,6 +47,12 @@ agent-device reinstall com.example.app ./build/app.apk   # Fresh-state uninstall
 agent-device close
 ```
 
+`install`/`reinstall` binary format support:
+
+- Android: `.apk`
+- iOS: `.app`
+- Not supported directly: `.aab` and `.ipa`
+
 If `open` fails because no booted simulator/emulator/device is available, run `boot --platform ios|android` and retry.
 
 ## Fast batching
