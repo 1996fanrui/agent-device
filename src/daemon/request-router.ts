@@ -308,13 +308,18 @@ export function createRequestHandler(deps: RequestRouterDeps): (req: DaemonReque
             command === 'screenshot' && outFlag
               ? SessionStore.expandHome(outFlag, scopedReq.meta?.cwd)
               : outFlag;
+          const recordedPositionals = command === 'screenshot' ? resolvedPositionals : positionals;
+          const recordedFlags =
+            command === 'screenshot' && resolvedOut
+              ? { ...(scopedReq.flags ?? {}), out: resolvedOut }
+              : (scopedReq.flags ?? {});
           const data = await dispatch(session.device, command, resolvedPositionals, resolvedOut, {
             ...contextFromFlags(logPath, scopedReq.flags, session.appBundleId, session.trace?.outPath),
           });
           sessionStore.recordAction(session, {
             command,
-            positionals: scopedReq.positionals ?? [],
-            flags: scopedReq.flags ?? {},
+            positionals: recordedPositionals,
+            flags: recordedFlags,
             result: data ?? {},
           });
           return finalize({ ok: true, data: data ?? {} });

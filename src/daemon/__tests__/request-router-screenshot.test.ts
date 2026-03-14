@@ -62,6 +62,8 @@ test('screenshot resolves relative positional path against request cwd', async (
   assert.ok(capturedPath, 'dispatch should have been called with a path');
   assert.equal(capturedPath, path.join(callerCwd, 'evidence/test.png'));
   assert.ok(path.isAbsolute(capturedPath), 'path passed to dispatch must be absolute');
+  const recordedAction = sessionStore.get('default')?.actions.at(-1);
+  assert.deepEqual(recordedAction?.positionals, [path.join(callerCwd, 'evidence/test.png')]);
 });
 
 test('screenshot keeps absolute positional path unchanged', async () => {
@@ -94,6 +96,8 @@ test('screenshot keeps absolute positional path unchanged', async () => {
   });
 
   assert.equal(capturedPath, absolutePath);
+  const recordedAction = sessionStore.get('default')?.actions.at(-1);
+  assert.deepEqual(recordedAction?.positionals, [absolutePath]);
 });
 
 test('screenshot resolves --out flag path against request cwd', async () => {
@@ -129,4 +133,6 @@ test('screenshot resolves --out flag path against request cwd', async () => {
   assert.ok(capturedOut, 'dispatch should have been called with out path');
   assert.equal(capturedOut, path.join(callerCwd, 'evidence/test.png'));
   assert.ok(path.isAbsolute(capturedOut), 'out path passed to dispatch must be absolute');
+  const recordedAction = sessionStore.get('default')?.actions.at(-1);
+  assert.equal(recordedAction?.flags.out, path.join(callerCwd, 'evidence/test.png'));
 });
